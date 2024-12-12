@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\support\Facades\DB;
 
+
 class nlckhoacontroller extends Controller
 {
     //doc du lieu tu bang khoa 
@@ -31,10 +32,47 @@ class nlckhoacontroller extends Controller
     #edit submit
     public function nlceditsubmit( request $request)
     {
-        //lay du lieu moi tren form usua
+        //lay du lieu moi tren form sua
         $makh= $request->input('nlcmakhoa');
         $tenkh= $request->input('nlctenkhoa');
-        DB::update("UPDATE nlckhoa SET nlctenkhoa =? where nlcmakhoa=?",[$tenkh,$makhoa]);
+        DB::update("UPDATE nlckhoa SET nlctenkhoa =? where nlcmakhoa=?",[$makh,$tenkh]);
+        return redirect('/khoa');
+    }
+    //insert -get 
+    public function nlcinsert()
+    {
+        return  view('nlckhoa.nlcinsert');
+    }
+    
+    //insert -submit
+    public function nlcinsertsubmit(request $request)
+    {
+        //kiem tra du lieu
+        $validate = $request->validate([
+        'nlcmakhoa' => 'required|max:2',
+        'nlctenkhoa' =>'required|max:50'
+        ],
+        [
+            'nlcmakhoa.requied' =>'vui long nhapj ma khoa.',
+            'nlcmakhoa.max' =>'ma khoa toi da 2 ky tu ',
+            'nlctenkhoa.requied' =>'vui long nhap ten  khoa.',
+            'nlctenkhoa.max'=>'ten khoa toi da 50 ki tu',
+
+
+        ]
+    );
+        //lay du lieu tren form
+        $makh =$request ->input('nlcmakhoa');
+        $tenkh =$request ->input('nlctenkhoa');
+        //ghi du lieu xuong database
+        DB::insert('insert into nlckhoa (nlcmakhoa, nlctenkhoa) values (?, ?)', [$request->$makh, $request->$tenkh]);
+        //chuyen du lieu trang danh sach
+        return redirect('/khoa');
+    }
+    //delete
+    public function nlcdelete($makh)
+    {
+        DB::delete("delete from nlckhoa where nlcmakhoa=?",[$makh]);
         return redirect('/khoa');
     }
 }
